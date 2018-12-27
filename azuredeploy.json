@@ -136,7 +136,7 @@
     "vmStorageAccountContainerName": "vhd",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
     "computerNamePrefix": "kafkanode",
-    "scriptUrl": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/kafka-on-ubuntu/",
+    "scriptUrl": "https://dev.azure.com/P10470084/rbignall-test1/_git/rbignall-test1/",
     "templateUrl": "[variables('scriptUrl')]",
     "sharedTemplateName": "shared-resources",
     "jumpboxTemplateName": "jumpbox-resources-",
@@ -293,7 +293,7 @@
       ],
       "properties": {
         "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', 'kafkaCluserAS')]"
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', 'kafkaClusterAS')]"
         },
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')]"
@@ -344,7 +344,7 @@
       ],
       "properties": {
         "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', 'kafkaCluserAS')]"
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', 'kafkaClusterAS')]"
         },
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')]"
