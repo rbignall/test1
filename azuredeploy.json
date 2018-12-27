@@ -136,7 +136,7 @@
     "vmStorageAccountContainerName": "vhd",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
     "computerNamePrefix": "kafkanode",
-    "scriptUrl": "https://dev.azure.com/P10470084/rbignall-test1/_git/rbignall-test1/",
+    "scriptUrl": "https://raw.githubusercontent.com/rbignall/test1/master/",
     "templateUrl": "[variables('scriptUrl')]",
     "sharedTemplateName": "shared-resources",
     "jumpboxTemplateName": "jumpbox-resources-",
