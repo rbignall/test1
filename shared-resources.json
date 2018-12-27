@@ -18,7 +18,7 @@
     },
     "addressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/16",
+      "defaultValue": "10.10.0.0/16",
       "metadata": {
         "Description": "The network address space for the virtual network"
       }
@@ -32,7 +32,7 @@
     },
     "subnetPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/24",
+      "defaultValue": "10.10.0.0/24",
       "metadata": {
         "Description": "Address space for the virtual network subnet"
       }

@@ -50,7 +50,7 @@
     },
     "addressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/16",
+      "defaultValue": "10.10.0.0/16",
       "metadata": {
         "description": "The network address space for the virtual network"
       }
@@ -64,7 +64,7 @@
     },
     "subnetPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/24",
+      "defaultValue": "10.10.0.0/24",
       "metadata": {
         "description": "Address space for the virtual network subnet"
       }
@@ -89,14 +89,14 @@
     },
     "kafkaZooNodeIPAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.4",
+      "defaultValue": "10.10.0.4",
       "metadata": {
         "description": "The IP address prefix that will be used for constructing a static private IP address for each node in the cluster"
       }
     },
     "kafkaNodeIPAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.1",
+      "defaultValue": "10.10.0.1",
       "metadata": {
         "description": "The IP address prefix that will be used for constructing a static private IP address for each node in the cluster"
       }

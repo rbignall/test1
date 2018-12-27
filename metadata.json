@@ -4,7 +4,7 @@
   "itemDisplayName": "Provisions a Kafka Cluster on Ubuntu Virtual Machines",
   "description": "This template creates a Kafka cluster on Ubuntu virtual machine image, enables persistence (by default) and applies all well-known optimizations and best practices",
   "summary": "This template creates a Kafka Cluster on Ubuntu virtual machines",
-  "githubUsername": "p10470084",
+  "githubUsername": "rbignall",
   "dateUpdated": "2018-07-25"
 }
 
