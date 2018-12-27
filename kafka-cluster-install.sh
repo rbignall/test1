@@ -75,7 +75,7 @@ else
 fi
 
 #Script Parameters
-KF_VERSION="0.8.2.1"
+KF_VERSION="2.1.0"
 BROKER_ID=0
 ZOOKEEPER1KAFKA0="0"
 
@@ -182,7 +182,7 @@ install_kafka()
 	name=kafka
 	version=${KF_VERSION}
 	#this Kafka version is prefix same used for all versions
-	kafkaversion=2.10
+	kafkaversion=2.11
 	description="Apache Kafka is a distributed publish-subscribe messaging system."
 	url="https://kafka.apache.org/"
 	arch="all"
@@ -190,7 +190,7 @@ install_kafka()
 	license="Apache Software License 2.0"
 	package_version="-1"
 	src_package="kafka_${kafkaversion}-${version}.tgz"
-	download_url=http://mirror.sdunix.com/apache/kafka/${version}/${src_package} 
+	download_url=http://www-eu.apache.org/dist/kafka/${version}/${src_package} 
 
 	rm -rf kafka
 	mkdir -p kafka
