@@ -61,6 +61,12 @@
       "metadata": {
         "Description": "The global VM name prefix"
       }
+    },
+    "scriptUrl": {
+      "type": "string",
+      "metadata": {
+        "Description": "The URL for the shell script location"
+      }
     }
   },
   "variables": {},

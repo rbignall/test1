@@ -221,6 +221,9 @@
           },
           "computerNamePrefix": {
             "value": "[variables('computerNamePrefix')]"
+          },
+          "scriptUrl": {
+            "value": "[variables('scriptUrl')]"
           }
         }
       }

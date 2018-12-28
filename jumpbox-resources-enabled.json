@@ -68,6 +68,12 @@
       "metadata": {
         "description": "Location for all resources."
       }
+    },
+    "scriptUrl": {
+      "type": "string",
+      "metadata": {
+        "Description": "The URL for the shell script location"
+      }
     }
   },
   "variables": {
@@ -158,6 +164,28 @@
               "protocol": "tcp"
             }
           ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "jumpbox/installjava",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', 'jumpbox']",
+        "[concat('Microsoft.Network/networkInterfaces/', 'nicJumpbox')]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[concat(parameters('scriptUrl'), 'kafka-cluster-install.sh')]"
+          ],
+          "commandToExecute": "bash kafka-cluster-install.sh -j 1"
         }
       }
     }

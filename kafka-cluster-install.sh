@@ -43,6 +43,7 @@ help()
     echo "-h view this help content"
     echo "-z zookeeper not kafka"
     echo "-i zookeeper Private IP address prefix"
+    echo "-j just java"
 }
 
 log()
@@ -78,13 +79,14 @@ fi
 KF_VERSION="2.1.0"
 BROKER_ID=0
 ZOOKEEPER1KAFKA0="0"
+JAVAONLY="0"
 
 ZOOKEEPER_IP_PREFIX="10.10.0.4"
 INSTANCE_COUNT=1
 ZOOKEEPER_PORT="2181"
 
 #Loop through options passed
-while getopts :k:b:z:i:c:p:h optname; do
+while getopts :k:b:z:i:c:p:h:j optname; do
     log "Option $optname set with value ${OPTARG}"
   case $optname in
     k)  #kafka version
@@ -95,6 +97,9 @@ while getopts :k:b:z:i:c:p:h optname; do
       ;;
     z)  #zookeeper not kafka
       ZOOKEEPER1KAFKA0=${OPTARG}
+      ;;
+    j)  #only java, not zookeeper or kafka
+      JAVAONLY=${OPTARG}
       ;;
     i)  #zookeeper Private IP address prefix
       ZOOKEEPER_IP_PREFIX=${OPTARG}
@@ -220,6 +225,8 @@ install_kafka()
 #------------------------
 install_java
 
+if [ ${JAVAONLY} -eq "0" ]
+then
 if [ ${ZOOKEEPER1KAFKA0} -eq "1" ];
 then
 	#
@@ -232,4 +239,4 @@ else
 	#-----------------------
 	install_kafka
 fi
-
+fi
