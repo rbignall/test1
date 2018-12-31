@@ -211,8 +211,8 @@ install_kafka()
 	
 	sed -r -i "s/(broker.id)=(.*)/\1=${BROKER_ID}/g" config/server.properties
 	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" config/server.properties
-	sed -i "/advertised.listeners/c advertised.listeners=PLAINTEXT://"${THIS_IP_ADDRESS}":9092" config/server.properties
-	sed -i "/advertised.listeners/a advertised.host.name="${THIS_IP_ADDRESS} config/server.properties
+	sed -i "/advertised.listeners/c advertised.listeners=PLAINTEXT://${THIS_IP_ADDRESS}:9092" config/server.properties
+	sed -i "/advertised.listeners/a advertised.host.name=${THIS_IP_ADDRESS}" config/server.properties
 	sed -i "/advertised.host.name/a advertised.port=9092" config/server.properties
 	chmod u+x /usr/local/kafka/kafka_${kafkaversion}-${version}/bin/kafka-server-start.sh
 	/usr/local/kafka/kafka_${kafkaversion}-${version}/bin/kafka-server-start.sh /usr/local/kafka/kafka_${kafkaversion}-${version}/config/server.properties &
