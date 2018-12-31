@@ -85,7 +85,7 @@ ZOOKEEPER_IP_PREFIX="10.10.0.4"
 INSTANCE_COUNT=1
 ZOOKEEPER_PORT="2181"
 
-THIS_IP_ADDRESS=$(hostname -I)
+THIS_IP_ADDRESS=$(hostname -I | tr -d '[:space:]')
 
 #Loop through options passed
 while getopts :k:b:z:i:c:p:h:j optname; do
