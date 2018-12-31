@@ -85,6 +85,8 @@ ZOOKEEPER_IP_PREFIX="10.10.0.4"
 INSTANCE_COUNT=1
 ZOOKEEPER_PORT="2181"
 
+THIS_IP_ADDRESS=$(hostname -I)
+
 #Loop through options passed
 while getopts :k:b:z:i:c:p:h:j optname; do
     log "Option $optname set with value ${OPTARG}"
@@ -207,11 +209,11 @@ install_kafka()
 	tar zxf ${src_package}
 	cd kafka_${kafkaversion}-${version}
 	
-	sed -r -i "s/(broker.id)=(.*)/\1=${BROKER_ID}/g" config/server.properties 
-	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" config/server.properties 
-#	cp config/server.properties config/server-1.properties 
-#	sed -r -i "s/(broker.id)=(.*)/\1=1/g" config/server-1.properties 
-#	sed -r -i "s/^(port)=(.*)/\1=9093/g" config/server-1.properties````
+	sed -r -i "s/(broker.id)=(.*)/\1=${BROKER_ID}/g" config/server.properties
+	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" config/server.properties
+	sed -i "/advertised.listeners/r advertised.listeners=PLAINTEXT://"${THIS_IP_ADDRESS}":9092" config/server.properties
+	sed -i "/advertised.listeners/a advertised.host.name="${THIS_IP_ADDRESS} config/server.properties
+	sed -i "/advertised.host.name/a advertised.port=9092" config/server.properties
 	chmod u+x /usr/local/kafka/kafka_${kafkaversion}-${version}/bin/kafka-server-start.sh
 	/usr/local/kafka/kafka_${kafkaversion}-${version}/bin/kafka-server-start.sh /usr/local/kafka/kafka_${kafkaversion}-${version}/config/server.properties &
 }
