@@ -85,8 +85,6 @@ ZOOKEEPER_IP_PREFIX="10.10.0.4"
 INSTANCE_COUNT=1
 ZOOKEEPER_PORT="2181"
 
-THIS_IP_ADDRESS=$(hostname -I | tr -d '[:space:]')
-
 #Loop through options passed
 while getopts :k:b:z:i:c:p:h:j optname; do
     log "Option $optname set with value ${OPTARG}"
@@ -120,6 +118,9 @@ while getopts :k:b:z:i:c:p:h:j optname; do
       ;;
   esac
 done
+
+THIS_IP_ADDRESS=$(hostname -I | tr -d '[:space:]')
+THIS_HOST="rbkafka${BROKER_ID}.uksouth.cloudapp.azure.com"
 
 # Install Oracle Java
 install_java()
@@ -211,8 +212,8 @@ install_kafka()
 	
 	sed -r -i "s/(broker.id)=(.*)/\1=${BROKER_ID}/g" config/server.properties
 	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" config/server.properties
-	sed -i "/advertised.listeners/c advertised.listeners=PLAINTEXT://${THIS_IP_ADDRESS}:9092" config/server.properties
-	sed -i "/advertised.listeners/a advertised.host.name=${THIS_IP_ADDRESS}" config/server.properties
+	sed -i "/advertised.listeners/c advertised.listeners=PLAINTEXT://${THIS_HOST}:9092" config/server.properties
+	sed -i "/advertised.listeners/a advertised.host.name=${THIS_HOST}" config/server.properties
 	sed -i "/advertised.host.name/a advertised.port=9092" config/server.properties
 	chmod u+x /usr/local/kafka/kafka_${kafkaversion}-${version}/bin/kafka-server-start.sh
 	/usr/local/kafka/kafka_${kafkaversion}-${version}/bin/kafka-server-start.sh /usr/local/kafka/kafka_${kafkaversion}-${version}/config/server.properties &

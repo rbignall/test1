@@ -48,6 +48,13 @@
         "description": "The arbitrary name of the virtual network provisioned for the cluster"
       }
     },
+    "networkSecurityGroupName": {
+      "type": "string",
+      "defaultValue": "myNetworkSecurityGroup",
+      "metadata": {
+        "Description": "The arbitrary name of the network security group provisioned for the cluster"
+      }
+    },
     "addressPrefix": {
       "type": "string",
       "defaultValue": "10.10.0.0/16",
@@ -178,6 +185,9 @@
           "virtualNetworkName": {
             "value": "[parameters('virtualNetworkName')]"
           },
+          "networkSecurityGroupName": {
+            "value": "[parameters('networkSecurityGroupName')]"
+          },
           "addressPrefix": {
             "value": "[parameters('addressPrefix')]"
           },
@@ -229,7 +239,24 @@
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2018-08-01",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat('publicIPKafka', copyindex())]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "ipLoop",
+        "count": "[variables('numberOfKafkaInstances')]"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[concat('rbkafka', copyindex())]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2018-08-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat('niczoo', copyindex())]",
       "location": "[parameters('location')]",
@@ -256,7 +283,7 @@
       }
     },
     {
-      "apiVersion": "2015-05-01-preview",
+      "apiVersion": "2018-08-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat('nic', copyindex())]",
       "location": "[parameters('location')]",
@@ -265,7 +292,8 @@
         "count": "[variables('numberOfKafkaInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared-resources')]"
+        "[concat('Microsoft.Resources/deployments/', 'shared-resources')]",
+        "[concat('Microsoft.Network/publicIPAddresses/', concat('publicIPKafka', copyindex()))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -274,12 +302,18 @@
             "properties": {
               "privateIPAllocationMethod": "Static",
               "privateIPAddress": "[concat(parameters('kafkaNodeIPAddressPrefix'), copyindex())]",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('publicIPKafka', copyindex()))]"
+              },
               "subnet": {
                 "id": "[variables('subnetRef')]"
               }
             }
           }
-        ]
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+        }
       }
     },
     {

@@ -12,10 +12,13 @@
       "value": "great*Scott"
     },
     "virtualNetworkName": {
-      "value": "test-kafka-vnet"
+      "value": "rbignallKafkaVNET"
+    },
+    "networkSecurityGroupName": {
+      "value": "rbignallKafkaNSG"
     },
     "subnetName": {
-      "value": "test-kafka-subnet-1"
+      "value": "rbignallKafkaSubnet-1"
     },
     "addressPrefix": {
       "value": "10.10.0.0/16"

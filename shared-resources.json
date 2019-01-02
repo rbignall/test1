@@ -16,6 +16,13 @@
         "Description": "The arbitrary name of the virtual network provisioned for the cluster"
       }
     },
+    "networkSecurityGroupName": {
+      "type": "string",
+      "defaultValue": "myNetworkSecurityGroup",
+      "metadata": {
+        "Description": "The arbitrary name of the network security group provisioned for the cluster"
+      }
+    },
     "addressPrefix": {
       "type": "string",
       "defaultValue": "10.10.0.0/16",
@@ -92,6 +99,33 @@
             "name": "[parameters('subnetName')]",
             "properties": {
               "addressPrefix": "[parameters('subnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('networkSecurityGroupName')]",
+      "apiVersion": "2018-08-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Port_9092_Kafka",
+            "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "9092",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
             }
           }
         ]
