@@ -88,7 +88,7 @@ INSTANCE_COUNT=1
 ZOOKEEPER_PORT="2181"
 
 #Loop through options passed
-while getopts :k:b:z:i:c:p:h:j optname; do
+while getopts :k:b:z:i:f:c:h:j optname; do
     log "Option $optname set with value ${OPTARG}"
   case $optname in
     k)  #kafka version
