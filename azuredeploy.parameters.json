@@ -41,6 +41,9 @@
     "jumpbox": {
       "value": "enabled"
     },
+    "kafkaConnect": {
+      "value": "enabled"
+    },
     "tshirtSize": {
       "value": "S"
     }

@@ -120,6 +120,17 @@
         "description": "The flag allowing to enable or disable provisioning of the jumpbox VM that can be used to access the Kafka nodes"
       }
     },
+    "kafkaConnect": {
+      "type": "string",
+      "defaultValue": "enabled",
+      "allowedValues": [
+        "enabled",
+        "disabled"
+      ],
+      "metadata": {
+        "description": "The flag allowing to enable or disable provisioning of the jumpbox VM that can be used to access the Kafka nodes"
+      }
+    },
     "tshirtSize": {
       "type": "string",
       "defaultValue": "S",
@@ -148,6 +159,7 @@
     "templateUrl": "[variables('scriptUrl')]",
     "sharedTemplateName": "shared-resources",
     "jumpboxTemplateName": "jumpbox-resources-",
+    "kafkaConnectTemplateName": "kafka-connect-",
     "tshirtSizeS": {
       "numberOfZookeeperInstances": 1,
       "numberOfKafkaInstances": 3,
@@ -211,6 +223,44 @@
         "mode": "Incremental",
         "templateLink": {
           "uri": "[concat(variables('templateUrl'), variables('jumpboxTemplateName'), parameters('jumpbox'), '.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualNetworkName": {
+            "value": "[parameters('virtualNetworkName')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('storageAccountName')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "computerNamePrefix": {
+            "value": "[variables('computerNamePrefix')]"
+          },
+          "scriptUrl": {
+            "value": "[variables('scriptUrl')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "kafka-connect",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'shared-resources')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(variables('templateUrl'), variables('kafkaConnectTemplateName'), parameters('kafkaConnect'), '.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

@@ -43,6 +43,7 @@ help()
     echo "-h view this help content"
     echo "-z zookeeper not kafka"
     echo "-i zookeeper Private IP address prefix"
+    echo "-f kafka connect not kafka"
     echo "-j just java"
 }
 
@@ -80,6 +81,7 @@ KF_VERSION="2.1.0"
 BROKER_ID=0
 ZOOKEEPER1KAFKA0="0"
 JAVAONLY="0"
+KAFKACONNECT="0"
 
 ZOOKEEPER_IP_PREFIX="10.10.0.4"
 INSTANCE_COUNT=1
@@ -103,6 +105,9 @@ while getopts :k:b:z:i:c:p:h:j optname; do
       ;;
     i)  #zookeeper Private IP address prefix
       ZOOKEEPER_IP_PREFIX=${OPTARG}
+      ;;
+    f)  #kafka connect not kafka
+      KAFKACONNECT=${OPTARG}
       ;;
     c) # Number of instances
 	INSTANCE_COUNT=${OPTARG}
@@ -219,9 +224,23 @@ install_kafka()
 	/usr/local/kafka/kafka_${kafkaversion}-${version}/bin/kafka-server-start.sh /usr/local/kafka/kafka_${kafkaversion}-${version}/config/server.properties &
 }
 
+# Install kafka connect
+install_kafka_connect()
+{
+  log "Installing Kafka Connect"
+
+  wget -qO - "https://packages.confluent.io/deb/3.3/archive.key" | apt-key add -
+  add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/3.3 stable main"
+  apt-get -y update 
+  apt-get -y install confluent-platform-oss-2.11
+
+  cd /etc/schema-registry
+  sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" schema-registry.properties
+}
+
 # Primary Install Tasks
 #########################
-#NOTE: These first three could be changed to run in parallel
+#NOTE: These first three could be changed to run in parallel --- OBSOLETE comment
 #      Future enhancement - (export the functions and use background/wait to run in parallel)
 
 #Install Oracle Java
@@ -230,16 +249,24 @@ install_java
 
 if [ ${JAVAONLY} -eq "0" ]
 then
-if [ ${ZOOKEEPER1KAFKA0} -eq "1" ];
-then
-	#
-	#Install zookeeper
-	#-----------------------
-	install_zookeeper
-else
-	#
-	#Install kafka
-	#-----------------------
-	install_kafka
-fi
+  if [ ${ZOOKEEPER1KAFKA0} -eq "1" ]
+  then
+    #
+    #Install zookeeper
+    #-----------------------
+    install_zookeeper
+  else
+    if [ ${KAFKACONNECT} -eq "1" ]
+    then
+      #
+      #Install kafka connect
+      #-----------------------
+      install_kafka_connect
+    else
+      #
+      #Install kafka
+      #-----------------------
+      install_kafka
+    fi
+  fi
 fi
