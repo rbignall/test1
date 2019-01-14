@@ -184,7 +184,7 @@
             "fileUris": [
               "[concat(parameters('scriptUrl'), 'kafka-cluster-install.sh')]"
             ],
-            "commandToExecute": "bash kafka-cluster-install.sh -f 1"
+            "commandToExecute": "[concat('bash kafka-cluster-install.sh -f 1 -p ', parameters('adminPassword'))]"
           }
         }
       }

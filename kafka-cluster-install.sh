@@ -43,8 +43,9 @@ help()
     echo "-h view this help content"
     echo "-z zookeeper not kafka"
     echo "-i zookeeper Private IP address prefix"
-    echo "-f kafka connect not kafka"
+    echo "-f kafka connect and mysql, not kafka"
     echo "-j just java"
+    echo "-p mysql root password"
 }
 
 log()
@@ -82,13 +83,14 @@ BROKER_ID=0
 ZOOKEEPER1KAFKA0="0"
 JAVAONLY="0"
 KAFKACONNECT="0"
+MYSQLPASSWORD=""
 
 ZOOKEEPER_IP_PREFIX="10.10.0.4"
 INSTANCE_COUNT=1
 ZOOKEEPER_PORT="2181"
 
 #Loop through options passed
-while getopts :k:b:z:i:f:c:h:j optname; do
+while getopts :k:b:z:i:f:c:h:j:p optname; do
     log "Option $optname set with value ${OPTARG}"
   case $optname in
     k)  #kafka version
@@ -110,8 +112,11 @@ while getopts :k:b:z:i:f:c:h:j optname; do
       KAFKACONNECT=${OPTARG}
       ;;
     c) # Number of instances
-	INSTANCE_COUNT=${OPTARG}
-	;;
+	    INSTANCE_COUNT=${OPTARG}
+    	;;
+    p)  #mysql root password
+      MYSQLPASSWORD=${OPTARG}
+      ;;
     h)  #show help
       help
       exit 2
@@ -236,6 +241,25 @@ install_kafka_connect()
 
   cd /etc/schema-registry
   sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" schema-registry.properties
+  /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties &
+}
+
+# Install mysql
+install_mysql()
+{
+  log "Installing MySql"
+
+  apt-get -y update
+  debconf-set-selections <<< "mysql-server mysql-server/root_password password ${MYSQLPASSWORD}"
+  debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${MYSQLPASSWORD}"
+  apt-get -y install mysql-server php5-mysql
+
+  mysql_install_db
+  # actions from mysql_secure_installation (roughly)
+  mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
+  mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
+  mysql -uroot -p${MYSQLPASSWORD} -e "DROP DATABASE IF EXISTS test"
+  mysql -uroot -p${MYSQLPASSWORD} -e "FLUSH PRIVILEGES"
 }
 
 # Primary Install Tasks
@@ -259,9 +283,10 @@ then
     if [ ${KAFKACONNECT} -eq "1" ]
     then
       #
-      #Install kafka connect
-      #-----------------------
+      #Install kafka connect and mysql
+      #-------------------------------
       install_kafka_connect
+      install_mysql
     else
       #
       #Install kafka
