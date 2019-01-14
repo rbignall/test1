@@ -260,7 +260,8 @@ install_mysql()
   log "Installing MySql"
 
   apt-get -y update
-  DEBIAN_FRONTEND=noninteractive apt-get -q -y -o Dpkg::Options::="--force-confnew" install mysql-server php5-mysql
+  rm -v /etc/apt/apt.conf.d/70debconf
+  DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server php5-mysql
 
   mysql_install_db
 
