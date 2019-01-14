@@ -242,6 +242,16 @@ install_kafka_connect()
   cd /etc/schema-registry
   sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" schema-registry.properties
   /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties &
+
+  # Note this is a quick hack relying on the BROKER_ID to be defaulted to 0 for the kafka connect server
+	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" connect-avro-distributed.properties
+	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" connect-avro-standalone.properties
+
+	sed -i "/config.storage.replication.factor/c config.storage.replication.factor=3" connect-avro-distributed.properties
+	sed -i "/offset.storage.replication.factor/c offset.storage.replication.factor=3" connect-avro-distributed.properties
+	sed -i "/status.storage.replication.factor/c status.storage.replication.factor=3" connect-avro-distributed.properties
+
+  /usr/bin/connect-distributed /etc/schema-registry/connect-avro-distributed.properties &
 }
 
 # Install mysql
@@ -253,12 +263,14 @@ install_mysql()
   DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server php5-mysql
 
   mysql_install_db
+
+  /usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
+
   # actions from mysql_secure_installation (roughly)
-  mysql -e "UPDATE mysql.user SET Password = PASSWORD('"${MYSQLPASSWORD}"') WHERE User = 'root'"
-  mysql -e "DELETE FROM mysql.user WHERE User=''"
-  mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
-  mysql -e "DROP DATABASE IF EXISTS test"
-  mysql -e "FLUSH PRIVILEGES"
+  mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
+  mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
+  mysql -uroot -p${MYSQLPASSWORD} -e "DROP DATABASE IF EXISTS test"
+  mysql -uroot -p${MYSQLPASSWORD} -e "FLUSH PRIVILEGES"
 }
 
 # Primary Install Tasks
