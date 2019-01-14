@@ -260,12 +260,13 @@ install_mysql()
   log "Installing MySql"
 
   apt-get -y update
-  rm -v /etc/apt/apt.conf.d/70debconf
+  echo "mysql-server mysql-server/root_password password ${MYSQLPASSWORD}" | sudo debconf-set-selections
+  echo "mysql-server mysql-server/root_password_again password ${MYSQLPASSWORD}" | sudo debconf-set-selections
   DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server php5-mysql
 
   mysql_install_db
 
-  /usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
+#  /usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
 
   # actions from mysql_secure_installation (roughly)
   mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
