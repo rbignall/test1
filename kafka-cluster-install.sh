@@ -260,8 +260,8 @@ install_mysql()
   log "Installing MySql"
 
   apt-get -y update
-  echo "mysql-server mysql-server/root_password password ${MYSQLPASSWORD}" | sudo debconf-set-selections
-  echo "mysql-server mysql-server/root_password_again password ${MYSQLPASSWORD}" | sudo debconf-set-selections
+  echo "mysql-server-5.5 mysql-server/root_password password ${MYSQLPASSWORD}" | sudo debconf-set-selections
+  echo "mysql-server-5.5 mysql-server/root_password_again password ${MYSQLPASSWORD}" | sudo debconf-set-selections
   DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server php5-mysql
 
   mysql_install_db
