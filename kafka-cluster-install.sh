@@ -254,12 +254,12 @@ install_mysql()
   debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${MYSQLPASSWORD}"
   apt-get -y install mysql-server php5-mysql
 
-  mysql_install_db
+  #mysql_install_db
   # actions from mysql_secure_installation (roughly)
-  mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
-  mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
-  mysql -uroot -p${MYSQLPASSWORD} -e "DROP DATABASE IF EXISTS test"
-  mysql -uroot -p${MYSQLPASSWORD} -e "FLUSH PRIVILEGES"
+  #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
+  #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
+  #mysql -uroot -p${MYSQLPASSWORD} -e "DROP DATABASE IF EXISTS test"
+  #mysql -uroot -p${MYSQLPASSWORD} -e "FLUSH PRIVILEGES"
 }
 
 # Primary Install Tasks
