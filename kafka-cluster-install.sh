@@ -239,9 +239,12 @@ install_kafka_connect()
   apt-get -y update 
   apt-get -y install confluent-platform-oss-2.11
 
-  cd /etc/schema-registry
-  sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" schema-registry.properties
+  sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/schema-registry/schema-registry.properties
   /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties &
+
+	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/kafka-rest/kafka-rest.properties
+  sed -i '/zookeeper.connect/s/^#//g' /etc/kafka-rest/kafka-rest.properties
+  /usr/bin/kafka-rest-start /etc/kafka-rest/kafka-rest.properties &
 
   # Note this is a quick hack relying on the BROKER_ID to be defaulted to 0 for the kafka connect server
 	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" connect-avro-distributed.properties
@@ -264,15 +267,15 @@ install_mysql()
   echo "mysql-server-5.5 mysql-server/root_password_again password ${MYSQLPASSWORD}" | sudo debconf-set-selections
   DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server php5-mysql
 
-  mysql_install_db
+  #mysql_install_db
 
-#  /usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
+  #/usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
 
   # actions from mysql_secure_installation (roughly)
-  mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
-  mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
-  mysql -uroot -p${MYSQLPASSWORD} -e "DROP DATABASE IF EXISTS test"
-  mysql -uroot -p${MYSQLPASSWORD} -e "FLUSH PRIVILEGES"
+  #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
+  #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
+  #mysql -uroot -p${MYSQLPASSWORD} -e "DROP DATABASE IF EXISTS test"
+  #mysql -uroot -p${MYSQLPASSWORD} -e "FLUSH PRIVILEGES"
 }
 
 # Primary Install Tasks
