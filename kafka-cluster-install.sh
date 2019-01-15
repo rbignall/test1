@@ -264,7 +264,7 @@ install_mysql()
   log "Installing MySql"
 
   apt-get -y update
-  DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server php5-mysql
+  DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server php5-mysql libmysql-java
 
   # Temporarily commented out as they seem to run before the install has finished
   #/usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
@@ -274,6 +274,9 @@ install_mysql()
   #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
   #mysql -uroot -p${MYSQLPASSWORD} -e "DROP DATABASE IF EXISTS test"
   #mysql -uroot -p${MYSQLPASSWORD} -e "FLUSH PRIVILEGES"
+
+  # To get the JDBC connector to find the mysql driver (quick attempts using CLASSPATH failed):
+  ln -s /usr/share/java/mysql-connector-java.jar /usr/share/java/kafka-connect-jdbc/mysql.jar
 }
 
 # Primary Install Tasks
