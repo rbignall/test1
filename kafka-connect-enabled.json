@@ -78,7 +78,7 @@
     },
     "variables": {
       "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
-      "vmSize": "Standard_A0"
+      "vmSize": "Standard_A1_v2"
     },
     "resources": [
       {
