@@ -247,12 +247,12 @@ install_kafka_connect()
   /usr/bin/kafka-rest-start /etc/kafka-rest/kafka-rest.properties &
 
   # Note this is a quick hack relying on the BROKER_ID to be defaulted to 0 for the kafka connect server
-	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" connect-avro-distributed.properties
-	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" connect-avro-standalone.properties
+	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/schema-registry/connect-avro-distributed.properties
+	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/schema-registry/connect-avro-standalone.properties
 
-	sed -i "/config.storage.replication.factor/c config.storage.replication.factor=3" connect-avro-distributed.properties
-	sed -i "/offset.storage.replication.factor/c offset.storage.replication.factor=3" connect-avro-distributed.properties
-	sed -i "/status.storage.replication.factor/c status.storage.replication.factor=3" connect-avro-distributed.properties
+	sed -i "/config.storage.replication.factor/c config.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
+	sed -i "/offset.storage.replication.factor/c offset.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
+	sed -i "/status.storage.replication.factor/c status.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
 
   /usr/bin/connect-distributed /etc/schema-registry/connect-avro-distributed.properties &
 }
@@ -265,6 +265,7 @@ install_mysql()
   apt-get -y update
   DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server php5-mysql
 
+  # Temporarily commented out as they seem to run before the install has finished
   #/usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
 
   # actions from mysql_secure_installation (roughly)
