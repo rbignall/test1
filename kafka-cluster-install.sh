@@ -254,7 +254,8 @@ install_kafka_connect()
 	sed -i "/offset.storage.replication.factor/c offset.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
 	sed -i "/status.storage.replication.factor/c status.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
 
-  /usr/bin/connect-distributed /etc/schema-registry/connect-avro-distributed.properties &
+  # Temporarily commented out as it is failing for some reason
+  #/usr/bin/connect-distributed /etc/schema-registry/connect-avro-distributed.properties &
 }
 
 # Install mysql
