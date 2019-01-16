@@ -136,8 +136,8 @@ THIS_HOST="rbkafka${BROKER_ID}.uksouth.cloudapp.azure.com"
 install_java()
 {
     log "Installing Java"
-#    add-apt-repository -y ppa:openjdk-r/ppa
-#    apt-get -y update 
+    add-apt-repository -y ppa:openjdk-r/ppa
+    apt-get -y update 
     apt-get -y install openjdk-8-jre
 }
 
@@ -232,10 +232,11 @@ install_kafka_connect()
 {
   log "Installing Kafka Connect"
 
-#  wget -qO - "https://packages.confluent.io/deb/5.1/archive.key" | apt-key add -
-#  add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/5.1 stable main"
-#  apt-get -y update 
-  apt-get -y install confluent-community-2.11
+  add-apt-repository -y ppa:openjdk-r/ppa
+  wget -qO - "https://packages.confluent.io/deb/5.1/archive.key" | apt-key add -
+  add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/5.1 stable main"
+  apt-get -y update
+  apt-get -y install openjdk-8-jre confluent-community-2.11
 
   sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/schema-registry/schema-registry.properties
   /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties &
@@ -292,18 +293,12 @@ install_mysql()
 #NOTE: These first three could be changed to run in parallel --- OBSOLETE comment
 #      Future enhancement - (export the functions and use background/wait to run in parallel)
 
-# Set up apt repos and do update prior to starting anything
-add-apt-repository -y ppa:openjdk-r/ppa
-if [ ${KAFKACONNECT} -eq "1" ]
-then
-  wget -qO - "https://packages.confluent.io/deb/5.1/archive.key" | apt-key add -
-  add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/5.1 stable main"
-fi
-apt-get -y update
-
 #Install Oracle Java
 #------------------------
-install_java
+if [ ${KAFKACONNECT} -neq "1" ]
+then
+  install_java
+fi
 
 if [ ${JAVAONLY} -eq "0" ]
 then
@@ -320,7 +315,7 @@ then
       #Install kafka connect and mysql
       #-------------------------------
       install_kafka_connect
-      install_mysql
+      #install_mysql
     else
       #
       #Install kafka
