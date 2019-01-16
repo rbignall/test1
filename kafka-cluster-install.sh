@@ -251,6 +251,8 @@ install_kafka_connect_and_mysql()
 	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/schema-registry/connect-avro-standalone.properties
 	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/kafka/connect-standalone.properties
 	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/kafka/connect-distributed.properties
+	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/kafka/consumer.properties
+  sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/kafka/producer.properties
 
 	sed -i "/config.storage.replication.factor/c config.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
 	sed -i "/offset.storage.replication.factor/c offset.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
@@ -265,7 +267,6 @@ install_kafka_connect_and_mysql()
 	sed -i "/connection.url/c connection.url=jdbc:mysql://localhost:3306/sample?user=kafka&password=connect" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
 	sed -i "/incrementing.column.name/c incrementing.column.name=event_id" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
 	sed -i "/topic.prefix/c topic.prefix=jdbc_" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
-	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/kafka/consumer.properties
 
   # Temporarily commented out as they seem to run before the install has finished
   #/usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
