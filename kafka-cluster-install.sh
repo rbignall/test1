@@ -234,10 +234,10 @@ install_kafka_connect()
 {
   log "Installing Kafka Connect"
 
-  wget -qO - "https://packages.confluent.io/deb/3.3/archive.key" | apt-key add -
+  wget -qO - "https://packages.confluent.io/deb/5.1/archive.key" | apt-key add -
   add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/5.1 stable main"
   apt-get -y update 
-  apt-get -y install confluent-platform-oss-2.11
+  apt-get -y install confluent-community-2.11
 
   sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/schema-registry/schema-registry.properties
   /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties &
