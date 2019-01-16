@@ -228,15 +228,16 @@ install_kafka()
 }
 
 # Install kafka connect
-install_kafka_connect()
+install_kafka_connect_and_mysql()
 {
-  log "Installing Kafka Connect"
+  log "Installing Kafka Connect and MySql"
 
   add-apt-repository -y ppa:openjdk-r/ppa
   wget -qO - "https://packages.confluent.io/deb/5.1/archive.key" | apt-key add -
   add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/5.1 stable main"
   apt-get -y update
-  apt-get -y install openjdk-8-jre confluent-community-2.11
+#  apt-get -y install openjdk-8-jre confluent-community-2.11
+  DEBIAN_FRONTEND=noninteractive apt-get -q -y install openjdk-8-jre confluent-community-2.11 mysql-server php5-mysql libmysql-java
 
   sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/schema-registry/schema-registry.properties
   /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties &
@@ -265,15 +266,6 @@ install_kafka_connect()
 	sed -i "/incrementing.column.name/c incrementing.column.name=event_id" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
 	sed -i "/topic.prefix/c topic.prefix=jdbc_" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
 	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/kafka/consumer.properties
-}
-
-# Install mysql
-install_mysql()
-{
-  log "Installing MySql"
-
-#  apt-get -y update
-  DEBIAN_FRONTEND=noninteractive apt-get -q -y install mysql-server php5-mysql libmysql-java
 
   # Temporarily commented out as they seem to run before the install has finished
   #/usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
@@ -314,8 +306,7 @@ then
       #
       #Install kafka connect and mysql
       #-------------------------------
-      install_kafka_connect
-      #install_mysql
+      install_kafka_connect_and_mysql
     else
       #
       #Install kafka
