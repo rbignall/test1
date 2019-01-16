@@ -287,7 +287,7 @@ install_kafka_connect_and_mysql()
 
 #Install Oracle Java
 #------------------------
-if [ ${KAFKACONNECT} -neq "1" ]
+if [ ${KAFKACONNECT} -ne "1" ]
 then
   install_java
 fi
