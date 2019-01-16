@@ -235,7 +235,7 @@ install_kafka_connect()
   log "Installing Kafka Connect"
 
   wget -qO - "https://packages.confluent.io/deb/3.3/archive.key" | apt-key add -
-  add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/3.3 stable main"
+  add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/5.1 stable main"
   apt-get -y update 
   apt-get -y install confluent-platform-oss-2.11
 
@@ -249,13 +249,23 @@ install_kafka_connect()
   # Note this is a quick hack relying on the BROKER_ID to be defaulted to 0 for the kafka connect server
 	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/schema-registry/connect-avro-distributed.properties
 	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/schema-registry/connect-avro-standalone.properties
+	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/kafka/connect-standalone.properties
+	sed -i "/bootstrap.servers/c bootstrap.servers=${THIS_HOST}:9092" /etc/kafka/connect-distributed.properties
 
 	sed -i "/config.storage.replication.factor/c config.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
 	sed -i "/offset.storage.replication.factor/c offset.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
 	sed -i "/status.storage.replication.factor/c status.storage.replication.factor=3" /etc/schema-registry/connect-avro-distributed.properties
+	sed -i "/config.storage.replication.factor/c config.storage.replication.factor=3" /etc/kafka/connect-distributed.properties
+	sed -i "/offset.storage.replication.factor/c offset.storage.replication.factor=3" /etc/kafka/connect-distributed.properties
+	sed -i "/status.storage.replication.factor/c status.storage.replication.factor=3" /etc/kafka/connect-distributed.properties
 
-  # Temporarily commented out as it is failing for some reason
-  #/usr/bin/connect-distributed /etc/schema-registry/connect-avro-distributed.properties &
+  # Just a quick shortcut to prepare for the mysql kafka connect load
+  cp /etc/kafka-connect-jdbc/source-quickstart-sqlite.properties /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
+	sed -i "/test-source-sqlite/c name=test-source-mysql-jdbc-autoincrement" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
+	sed -i "/connection.url/c connection.url=jdbc:mysql://localhost:3306/sample?user=kafka&password=connect" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
+	sed -i "/incrementing.column.name/c incrementing.column.name=event_id" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
+	sed -i "/topic.prefix/c topic.prefix=jdbc_" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
+	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/kafka/consumer.properties
 }
 
 # Install mysql
