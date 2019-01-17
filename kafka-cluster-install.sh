@@ -269,9 +269,27 @@ install_kafka_connect_and_mysql()
 	sed -i "/incrementing.column.name/c incrementing.column.name=event_id" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
 	sed -i "/topic.prefix/c topic.prefix=jdbc_" /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
 
-  # Temporarily commented out as they seem to run before the install has finished
-  #/usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
+  cat <<transformers-mysql >> /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
 
+transforms=DateOfBirth
+transforms.DateOfBirth.type=org.apache.kafka.connect.transforms.TimestampConverter$Value
+transforms.DateOfBirth.field=customer_dob
+transforms.DateOfBirth.target.type=string
+transforms.DateOfBirth.format="yyyy-MM-dd"
+transformers-mysql
+
+  cat <<transformers-es >> /etc/kafka-connect-elasticsearch/quickstart-elasticsearch.properties
+
+transforms=DateOfBirth
+transforms.DateOfBirth.type=org.apache.kafka.connect.transforms.TimestampConverter$Value
+transforms.DateOfBirth.field=customer_dob
+transforms.DateOfBirth.target.type=Timestamp
+transforms.DateOfBirth.format="yyyy-MM-dd"
+transformers-es
+
+  /usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
+
+  # Temporarily commented out as they seem to run before the install has finished
   # actions from mysql_secure_installation (roughly)
   #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
   #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
