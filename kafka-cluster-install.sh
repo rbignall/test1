@@ -240,6 +240,7 @@ install_kafka_connect_and_mysql()
   DEBIAN_FRONTEND=noninteractive apt-get -q -y install openjdk-8-jre confluent-community-2.11 mysql-server php5-mysql libmysql-java
 
   sed -r -i "s/(kafkastore.connection.url)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/schema-registry/schema-registry.properties
+  sed -i -e "\$a avro.compatibility.level=none" /etc/schema-registry/schema-registry.properties
   /usr/bin/schema-registry-start /etc/schema-registry/schema-registry.properties &
 
 	sed -r -i "s/(zookeeper.connect)=(.*)/\1=$(join , $(expand_ip_range "${ZOOKEEPER_IP_PREFIX}-${INSTANCE_COUNT}"))/g" /etc/kafka-rest/kafka-rest.properties
