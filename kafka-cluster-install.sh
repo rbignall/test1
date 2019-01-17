@@ -272,16 +272,18 @@ install_kafka_connect_and_mysql()
   cat <<transformers-mysql >> /etc/kafka-connect-jdbc/source-quickstart-mysql.properties
 
 transforms=DateOfBirth
-transforms.DateOfBirth.type=org.apache.kafka.connect.transforms.TimestampConverter$Value
+transforms.DateOfBirth.type=org.apache.kafka.connect.transforms.TimestampConverter\$Value
 transforms.DateOfBirth.field=customer_dob
 transforms.DateOfBirth.target.type=string
 transforms.DateOfBirth.format="yyyy-MM-dd"
 transformers-mysql
 
+	sed -i "/topics/c topics=jdbc_payment_txn" /etc/kafka-connect-elasticsearch/quickstart-elasticsearch.properties
+
   cat <<transformers-es >> /etc/kafka-connect-elasticsearch/quickstart-elasticsearch.properties
 
 transforms=DateOfBirth
-transforms.DateOfBirth.type=org.apache.kafka.connect.transforms.TimestampConverter$Value
+transforms.DateOfBirth.type=org.apache.kafka.connect.transforms.TimestampConverter\$Value
 transforms.DateOfBirth.field=customer_dob
 transforms.DateOfBirth.target.type=Timestamp
 transforms.DateOfBirth.format="yyyy-MM-dd"
