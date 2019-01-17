@@ -287,9 +287,9 @@ transforms.DateOfBirth.target.type=Timestamp
 transforms.DateOfBirth.format="yyyy-MM-dd"
 transformers-es
 
-  /usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
-
   # Temporarily commented out as they seem to run before the install has finished
+  #/usr/bin/mysqladmin -u root password "${MYSQLPASSWORD}"
+
   # actions from mysql_secure_installation (roughly)
   #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User=''"
   #mysql -uroot -p${MYSQLPASSWORD} -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')"
