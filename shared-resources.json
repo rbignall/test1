@@ -16,11 +16,18 @@
         "Description": "The arbitrary name of the virtual network provisioned for the cluster"
       }
     },
-    "networkSecurityGroupName": {
+    "kafkaNSGName": {
       "type": "string",
-      "defaultValue": "myNetworkSecurityGroup",
+      "defaultValue": "myKafkaNetworkSecurityGroup",
       "metadata": {
-        "Description": "The arbitrary name of the network security group provisioned for the cluster"
+        "Description": "The arbitrary name of the network security group provisioned for Kafka access"
+      }
+    },
+    "sshNSGName": {
+      "type": "string",
+      "defaultValue": "mySSHNetworkSecurityGroup",
+      "metadata": {
+        "Description": "The arbitrary name of the network security group provisioned for SSH access"
       }
     },
     "addressPrefix": {
@@ -49,6 +56,13 @@
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
         "description": "Location for all resources."
+      }
+    },
+    "adminSourceIp": {
+      "type": "string",
+      "defaultValue": "85.115.54.201",
+      "metadata": {
+        "description": "Source IP address to allow connections on public IPs, or * to allow all."
       }
     }
   },
@@ -106,7 +120,7 @@
     },
     {
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('networkSecurityGroupName')]",
+      "name": "[parameters('kafkaNSGName')]",
       "apiVersion": "2018-08-01",
       "location": "[parameters('location')]",
       "properties": {
@@ -114,13 +128,40 @@
           {
             "name": "Port_9092_Kafka",
             "properties": {
-              "protocol": "*",
+              "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "9092",
-              "sourceAddressPrefix": "*",
+              "sourceAddressPrefix": "[parameters('adminSourceIp')]",
               "destinationAddressPrefix": "*",
               "access": "Allow",
               "priority": 100,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": []
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('sshNSGName')]",
+      "apiVersion": "2018-08-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Port_22_SSH",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "[parameters('adminSourceIp')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 200,
               "direction": "Inbound",
               "sourcePortRanges": [],
               "destinationPortRanges": [],

@@ -48,11 +48,18 @@
         "description": "The arbitrary name of the virtual network provisioned for the cluster"
       }
     },
-    "networkSecurityGroupName": {
+    "kafkaNSGName": {
       "type": "string",
-      "defaultValue": "myNetworkSecurityGroup",
+      "defaultValue": "myKafkaNetworkSecurityGroup",
       "metadata": {
-        "Description": "The arbitrary name of the network security group provisioned for the cluster"
+        "Description": "The arbitrary name of the network security group provisioned for Kafka access"
+      }
+    },
+    "sshNSGName": {
+      "type": "string",
+      "defaultValue": "mySSHNetworkSecurityGroup",
+      "metadata": {
+        "Description": "The arbitrary name of the network security group provisioned for SSH access"
       }
     },
     "addressPrefix": {
@@ -149,6 +156,13 @@
       "metadata": {
         "description": "Location for all resources."
       }
+    },
+    "adminSourceIp": {
+      "type": "string",
+      "defaultValue": "85.115.54.201",
+      "metadata": {
+        "description": "Source IP address to allow connections on public IPs, or * to allow all."
+      }
     }
   },
   "variables": {
@@ -197,8 +211,11 @@
           "virtualNetworkName": {
             "value": "[parameters('virtualNetworkName')]"
           },
-          "networkSecurityGroupName": {
-            "value": "[parameters('networkSecurityGroupName')]"
+          "kafkaNSGName": {
+            "value": "[parameters('kafkaNSGName')]"
+          },
+          "sshNSGName": {
+            "value": "[parameters('sshNSGName')]"
           },
           "addressPrefix": {
             "value": "[parameters('addressPrefix')]"
@@ -208,6 +225,9 @@
           },
           "subnetPrefix": {
             "value": "[parameters('subnetPrefix')]"
+          },
+          "adminSourceIp": {
+            "value": "[parameters('adminSourceIp')]"
           }
         }
       }
@@ -246,6 +266,9 @@
           },
           "scriptUrl": {
             "value": "[variables('scriptUrl')]"
+          },
+          "sshNSGName": {
+            "value": "[parameters('sshNSGName')]"
           }
         }
       }
@@ -284,6 +307,9 @@
           },
           "scriptUrl": {
             "value": "[variables('scriptUrl')]"
+          },
+          "sshNSGName": {
+            "value": "[parameters('sshNSGName')]"
           }
         }
       }
@@ -362,7 +388,7 @@
           }
         ],
         "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('kafkaNSGName'))]"
         }
       }
     },

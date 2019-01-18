@@ -67,6 +67,12 @@
       "metadata": {
         "Description": "The URL for the shell script location"
       }
+    },
+    "sshNSGName": {
+      "type": "string",
+      "metadata": {
+        "description": "Network security group name for the jumpbox (to allow SSH)."
+      }
     }
   },
   "variables": {},

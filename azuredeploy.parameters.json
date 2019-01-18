@@ -14,8 +14,11 @@
     "virtualNetworkName": {
       "value": "rbignallKafkaVNET"
     },
-    "networkSecurityGroupName": {
+    "kafkaNSGName": {
       "value": "rbignallKafkaNSG"
+    },
+    "sshNSGName": {
+      "value": "rbignallSSHNSG"
     },
     "subnetName": {
       "value": "rbignallKafkaSubnet-1"
@@ -46,6 +49,9 @@
     },
     "tshirtSize": {
       "value": "S"
+    },
+    "adminSourceIp": {
+      "value": "85.115.54.201"
     }
   }
 }
