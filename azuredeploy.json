@@ -278,7 +278,8 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'shared-resources')]"
+        "[concat('Microsoft.Resources/deployments/', 'shared-resources')]",
+        "[concat('Microsoft.Compute/virtualMachines/', 'brokervm', sub(variables('numberOfKafkaInstances'), 1))]"
       ],
       "properties": {
         "mode": "Incremental",
