@@ -51,7 +51,7 @@
       "value": "S"
     },
     "adminSourceIp": {
-      "value": "85.115.54.201"
+      "value": "*"
     }
   }
 }
